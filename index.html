@@ -43,8 +43,8 @@
     /* 3. JAM ANALOG ASTRO 2D */
     .clock-face {
       position: relative;
-      width: 220px;
-      height: 220px;
+      width: 230px;
+      height: 230px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -53,10 +53,10 @@
       align-items: center;
     }
 
-    /* ANGKA JAM 1-12 (DIBERIKAN POSISI SECARA MATHEMATICAL) */
+    /* ANGKA JAM 1-12 */
     .number {
       position: absolute;
-      font-size: 14px; /* Ditingkatkan ~25% dari sebelumnya */
+      font-size: 14px;
       font-weight: bold;
       color: #fef08a;
       text-shadow: 0 0 6px rgba(254, 240, 138, 0.5);
@@ -72,24 +72,25 @@
     /* MATAHARI DI PUSAT */
     .sun {
       position: absolute;
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       background: radial-gradient(circle, #fef08a 20%, #f59e0b 80%);
       border-radius: 50%;
       box-shadow: 0 0 12px #f59e0b, 0 0 20px rgba(245, 158, 11, 0.6);
       z-index: 10;
     }
 
-    /* LINTASAN ORBIT PLANET DATAR */
+    /* LINTASAN ORBIT PLANET (4 PLANET: MERKURIUS, VENUS, BUMI, MARS) */
     .orbit {
       position: absolute;
       border: 1px dashed rgba(255, 255, 255, 0.18);
       border-radius: 50%;
       animation: spin linear infinite;
     }
-    .orbit.mercury { width: 55px; height: 55px; animation-duration: 16s; }
-    .orbit.venus   { width: 88px; height: 88px; animation-duration: 28s; }
-    .orbit.earth   { width: 120px; height: 120px; animation-duration: 45s; }
+    .orbit.mercury { width: 50px; height: 50px; animation-duration: 14s; }
+    .orbit.venus   { width: 80px; height: 80px; animation-duration: 24s; }
+    .orbit.earth   { width: 110px; height: 110px; animation-duration: 38s; }
+    .orbit.mars    { width: 140px; height: 140px; animation-duration: 52s; }
 
     .planet {
       position: absolute;
@@ -99,8 +100,9 @@
       border-radius: 50%;
     }
     .mercury .planet { width: 5px; height: 5px; background: #cbd5e1; box-shadow: 0 0 4px #cbd5e1; }
-    .venus .planet   { width: 8px; height: 8px; background: #fbbf24; box-shadow: 0 0 6px #fbbf24; }
-    .earth .planet   { width: 10px; height: 10px; background: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
+    .venus .planet   { width: 7px; height: 7px; background: #fbbf24; box-shadow: 0 0 6px #fbbf24; }
+    .earth .planet   { width: 9px; height: 9px; background: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
+    .mars .planet    { width: 7px; height: 7px; background: #f97316; box-shadow: 0 0 6px #f97316; }
 
     /* JARUM JAM ANALOG */
     .hand {
@@ -111,10 +113,9 @@
       border-radius: 4px;
     }
 
-    /* JARUM JAM & MENIT WARNA PUTIH */
     .hour-hand {
       width: 3px;
-      height: 42px;
+      height: 44px;
       margin-left: -1.5px;
       background: #ffffff;
       box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
@@ -123,24 +124,22 @@
 
     .minute-hand {
       width: 2px;
-      height: 62px;
+      height: 66px;
       margin-left: -1px;
       background: #ffffff;
       box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
       z-index: 13;
     }
 
-    /* JARUM DETIK WARNA MERAH */
     .second-hand {
       width: 1.5px;
-      height: 72px;
+      height: 76px;
       margin-left: -0.75px;
       background: #ef4444;
       box-shadow: 0 0 8px rgba(239, 68, 68, 0.9);
       z-index: 14;
     }
 
-    /* titik pusat jarum */
     .center-dot {
       position: absolute;
       width: 6px;
@@ -175,14 +174,15 @@
 
   <!-- 3. JAM ANALOG ASTRO 2D -->
   <div class="clock-face">
-    <!-- ANGKA 1-12 SECARA DINAMIS -->
+    <!-- ANGKA 1-12 DINAMIS -->
     <div id="numbers-container"></div>
 
-    <!-- MATAHARI & PLANET 2D -->
+    <!-- MATAHARI & 4 PLANET 2D -->
     <div class="sun"></div>
     <div class="orbit mercury"><div class="planet"></div></div>
     <div class="orbit venus"><div class="planet"></div></div>
     <div class="orbit earth"><div class="planet"></div></div>
+    <div class="orbit mars"><div class="planet"></div></div>
 
     <!-- JARUM JAM ANALOG -->
     <div class="hand hour-hand" id="hour-hand"></div>
@@ -202,15 +202,14 @@
       "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
     ];
 
-    // MEMBUAT POSISI ANGKA 1-12 PRESISI LINGKARAN (ACUAN RADIUS 82PX)
     function generateNumbers() {
       const container = document.getElementById('numbers-container');
-      const radius = 82; // Jarak lingkaran angka dari pusat
-      const centerX = 110; // Pusat X
-      const centerY = 110; // Pusat Y
+      const radius = 88; // Jarak lingkaran angka
+      const centerX = 115;
+      const centerY = 115;
 
       for (let i = 1; i <= 12; i++) {
-        const angle = (i * 30 - 90) * (Math.PI / 180); // Sudut derajat ke radian
+        const angle = (i * 30 - 90) * (Math.PI / 180);
         const x = centerX + radius * Math.cos(angle);
         const y = centerY + radius * Math.sin(angle);
 
@@ -226,13 +225,13 @@
     function updateDateTime() {
       const now = new Date();
 
-      // 1. FORMAT TANGGAL
+      // 1. TANGGAL
       const day = now.getDate();
       const month = monthNames[now.getMonth()];
       const year = now.getFullYear();
       document.getElementById('date').textContent = `${day} ${month} ${year}`;
 
-      // 2. FORMAT JAM DIGITAL GMT+7
+      // 2. JAM DIGITAL GMT+7
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const seconds = now.getSeconds();
@@ -242,7 +241,7 @@
       const strS = String(seconds).padStart(2, '0');
       document.getElementById('clock').textContent = `${strH}:${strM}:${strS} GMT+7`;
 
-      // 3. POSISI JARUM JAM ANALOG
+      // 3. JARUM JAM ANALOG
       const hourDeg = (hours % 12 + minutes / 60) * 30;
       const minuteDeg = (minutes + seconds / 60) * 6;
       const secondDeg = seconds * 6;

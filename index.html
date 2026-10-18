@@ -40,17 +40,36 @@
       letter-spacing: 1px;
     }
 
-    /* 3. JAM ANALOG ASTRO 2D (DIKECILKAN AGAR PADAT) */
+    /* 3. JAM ANALOG ASTRO 2D */
     .clock-face {
       position: relative;
-      width: 185px; /* Dikecilkan dari 230px */
-      height: 185px;
+      width: 190px;
+      height: 190px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+    /* BINGKAI GARIS BINGKAI LUAR STATIS (TANPA GERAK / TANPA PLANET) */
+    .frame-ring-outer {
+      position: absolute;
+      width: 168px;
+      height: 168px;
+      border-radius: 50%;
+      border: 1px dashed rgba(254, 240, 138, 0.35); /* Garis lingkar bingkai warna emas pudar */
+      pointer-events: none;
+    }
+
+    .frame-ring-inner {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.12); /* Garis pembatas tipis di dalam angka */
+      pointer-events: none;
     }
 
     /* ANGKA JAM 1-12 */
@@ -59,7 +78,7 @@
       font-size: 13px;
       font-weight: bold;
       color: #fef08a;
-      text-shadow: 0 0 5px rgba(254, 240, 138, 0.5);
+      text-shadow: 0 0 6px rgba(254, 240, 138, 0.6);
       width: 18px;
       height: 18px;
       line-height: 18px;
@@ -80,17 +99,17 @@
       z-index: 10;
     }
 
-    /* LINTASAN ORBIT PLANET PADAT & RAPAT */
+    /* LINTASAN ORBIT PLANET (MERKURIUS, VENUS, BUMI, MARS) */
     .orbit {
       position: absolute;
-      border: 1px dashed rgba(255, 255, 255, 0.18);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
       border-radius: 50%;
       animation: spin linear infinite;
     }
     .orbit.mercury { width: 44px; height: 44px; animation-duration: 14s; }
-    .orbit.venus   { width: 70px; height: 70px; animation-duration: 24s; }
-    .orbit.earth   { width: 96px; height: 96px; animation-duration: 38s; }
-    .orbit.mars    { width: 122px; height: 122px; animation-duration: 52s; }
+    .orbit.venus   { width: 68px; height: 68px; animation-duration: 24s; }
+    .orbit.earth   { width: 92px; height: 92px; animation-duration: 38s; }
+    .orbit.mars    { width: 116px; height: 116px; animation-duration: 52s; }
 
     .planet {
       position: absolute;
@@ -133,7 +152,7 @@
 
     .second-hand {
       width: 1.5px;
-      height: 64px;
+      height: 66px;
       margin-left: -0.75px;
       background: #ef4444;
       box-shadow: 0 0 8px rgba(239, 68, 68, 0.9);
@@ -174,6 +193,10 @@
 
   <!-- 3. JAM ANALOG ASTRO 2D -->
   <div class="clock-face">
+    <!-- GARIS BINGKAI STATIS (OUTER & INNER BORDER) -->
+    <div class="frame-ring-outer"></div>
+    <div class="frame-ring-inner"></div>
+
     <!-- ANGKA 1-12 DINAMIS -->
     <div id="numbers-container"></div>
 
@@ -204,9 +227,9 @@
 
     function generateNumbers() {
       const container = document.getElementById('numbers-container');
-      const radius = 74; // Jarak lingkaran angka ditarik lebih rapat
-      const centerX = 92.5; // Pusat koordinat baru
-      const centerY = 92.5;
+      const radius = 77; // Jarak lingkaran angka pas di antara dua garis bingkai
+      const centerX = 95;
+      const centerY = 95;
 
       for (let i = 1; i <= 12; i++) {
         const angle = (i * 30 - 90) * (Math.PI / 180);

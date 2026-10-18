@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Astro Clock Widget</title>
+  <title>ASTRO CLOCK WIDGET</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -15,27 +15,32 @@
       align-items: center;
       min-height: 100vh;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      color: #ffffff; /* Semua font warna putih */
+      color: #ffffff;
       overflow: hidden;
       padding: 10px;
+      text-transform: uppercase; /* Capslock khusus untuk tampilan widget */
+      text-align: center;
     }
 
-    /* 1. Tanggal */
+    /* 1. TANGGAL */
     .date-display {
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: bold;
       margin-bottom: 4px;
       color: #ffffff;
+      letter-spacing: 1px;
     }
 
-    /* 2. Jam Digital */
+    /* 2. JAM DIGITAL */
     .time-display {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       margin-bottom: 10px;
       color: #ffffff;
+      letter-spacing: 1px;
     }
 
-    /* 3. Container Planet */
+    /* 3. CONTAINER PLANET */
     .clock-container {
       position: relative;
       width: 220px;
@@ -95,16 +100,17 @@
     .venus .planet   { width: 9px; height: 9px; background: #fbbf24; box-shadow: 0 0 6px #fbbf24; }
     .earth .planet   { width: 11px; height: 11px; background: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
 
-    /* 4. Sky Event */
+    /* 4. SKY EVENT */
     .event-display {
       margin-top: 12px;
-      font-size: 11px;
+      font-size: 13px;
+      font-weight: bold;
       color: #ffffff;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 6px 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      text-align: center;
+      background: transparent;
+      border: none;
+      padding: 0;
+      line-height: 1.4;
+      letter-spacing: 1px;
     }
 
     @keyframes spin {
@@ -114,13 +120,13 @@
 </head>
 <body>
 
-  <!-- 1. Tanggal -->
+  <!-- 1. TANGGAL -->
   <div class="date-display" id="date">-- --------- ----</div>
 
-  <!-- 2. Jam -->
+  <!-- 2. JAM -->
   <div class="time-display" id="clock">00:00:00 GMT+7</div>
 
-  <!-- 3. Planet -->
+  <!-- 3. PLANET -->
   <div class="clock-container">
     <div class="sun"></div>
     <div class="orbit-system">
@@ -130,27 +136,27 @@
     </div>
   </div>
 
-  <!-- 4. Sky Event -->
+  <!-- 4. SKY EVENT -->
   <div class="event-display" id="sky-event">
-    Calculating sky event...
+    CALCULATING...
   </div>
 
   <script>
     const monthNames = [
-      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      "JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI",
+      "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
     ];
 
     function updateDateTime() {
       const now = new Date();
 
-      // 1. Format Tanggal
+      // 1. FORMAT TANGGAL
       const day = now.getDate();
       const month = monthNames[now.getMonth()];
       const year = now.getFullYear();
       document.getElementById('date').textContent = `${day} ${month} ${year}`;
 
-      // 2. Format Jam GMT+7
+      // 2. FORMAT JAM GMT+7
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
@@ -160,11 +166,10 @@
     function updateSkyEvent() {
       const now = new Date();
       
-      // Target event terdekat (Contoh: Puncak Hujan Meteor Orionid 21 Oktober)
-      let eventDate = new Date(now.getFullYear(), 9, 21); // Month 9 = Oktober (0-indexed)
+      // TARGET EVENT TERDEKAT (21 OKTOBER)
+      let eventDate = new Date(now.getFullYear(), 9, 21);
       
       if (now > eventDate) {
-        // Jika lewat dari 21 Okt, set ke event berikutnya (misal: Leonids 17 Nov)
         eventDate = new Date(now.getFullYear(), 10, 17); 
       }
 
@@ -172,9 +177,9 @@
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays <= 0) {
-        document.getElementById('sky-event').textContent = "Today will be Orionids Meteor Shower!";
+        document.getElementById('sky-event').innerHTML = "TODAY WILL BE<br>ORIONIDS METEOR SHOWER";
       } else {
-        document.getElementById('sky-event').textContent = `In ${diffDays} days will be Orionids Meteor Shower`;
+        document.getElementById('sky-event').innerHTML = `IN ${diffDays} DAYS WILL BE<br>ORIONIDS METEOR SHOWER`;
       }
     }
 

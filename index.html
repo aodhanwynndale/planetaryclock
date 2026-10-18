@@ -43,49 +43,44 @@
     /* 3. JAM ANALOG ASTRO 2D */
     .clock-face {
       position: relative;
-      width: 210px;
-      height: 210px;
+      width: 220px;
+      height: 220px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* ANGKA JAM 1-12 */
+    /* ANGKA JAM 1-12 (DIBERIKAN POSISI SECARA MATHEMATICAL) */
     .number {
       position: absolute;
-      font-size: 11px;
+      font-size: 14px; /* Ditingkatkan ~25% dari sebelumnya */
       font-weight: bold;
       color: #fef08a;
-      text-shadow: 0 0 5px rgba(254, 240, 138, 0.4);
+      text-shadow: 0 0 6px rgba(254, 240, 138, 0.5);
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      text-align: center;
+      margin-left: -10px;
+      margin-top: -10px;
+      z-index: 15;
     }
-    .n1  { top: 10px; right: 52px; }
-    .n2  { top: 48px; right: 12px; }
-    .n3  { top: 96px; right: 8px; }
-    .n4  { bottom: 48px; right: 12px; }
-    .n5  { bottom: 10px; right: 52px; }
-    .n6  { bottom: 6px; left: 50%; transform: translateX(-50%); }
-    .n7  { bottom: 10px; left: 52px; }
-    .n8  { bottom: 48px; left: 12px; }
-    .n9  { top: 96px; left: 8px; }
-    .n10 { top: 48px; left: 12px; }
-    .n11 { top: 10px; left: 52px; }
-    .n12 { top: 6px; left: 50%; transform: translateX(-50%); }
 
     /* MATAHARI DI PUSAT */
     .sun {
       position: absolute;
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       background: radial-gradient(circle, #fef08a 20%, #f59e0b 80%);
       border-radius: 50%;
       box-shadow: 0 0 12px #f59e0b, 0 0 20px rgba(245, 158, 11, 0.6);
       z-index: 10;
     }
 
-    /* LINTASAN ORBIT 2D LINGKARAN DATAR */
+    /* LINTASAN ORBIT PLANET DATAR */
     .orbit {
       position: absolute;
       border: 1px dashed rgba(255, 255, 255, 0.18);
@@ -93,8 +88,8 @@
       animation: spin linear infinite;
     }
     .orbit.mercury { width: 55px; height: 55px; animation-duration: 16s; }
-    .orbit.venus   { width: 90px; height: 90px; animation-duration: 28s; }
-    .orbit.earth   { width: 125px; height: 125px; animation-duration: 45s; }
+    .orbit.venus   { width: 88px; height: 88px; animation-duration: 28s; }
+    .orbit.earth   { width: 120px; height: 120px; animation-duration: 45s; }
 
     .planet {
       position: absolute;
@@ -113,13 +108,47 @@
       bottom: 50%;
       left: 50%;
       transform-origin: bottom center;
-      background: #fef08a;
       border-radius: 4px;
-      box-shadow: 0 0 6px rgba(254, 240, 138, 0.6);
+    }
+
+    /* JARUM JAM & MENIT WARNA PUTIH */
+    .hour-hand {
+      width: 3px;
+      height: 42px;
+      margin-left: -1.5px;
+      background: #ffffff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
       z-index: 12;
     }
-    .hour-hand   { width: 3px; height: 42px; margin-left: -1.5px; }
-    .minute-hand { width: 2px; height: 62px; margin-left: -1px; }
+
+    .minute-hand {
+      width: 2px;
+      height: 62px;
+      margin-left: -1px;
+      background: #ffffff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+      z-index: 13;
+    }
+
+    /* JARUM DETIK WARNA MERAH */
+    .second-hand {
+      width: 1.5px;
+      height: 72px;
+      margin-left: -0.75px;
+      background: #ef4444;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.9);
+      z-index: 14;
+    }
+
+    /* titik pusat jarum */
+    .center-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      z-index: 16;
+    }
 
     /* 4. SKY EVENT */
     .event-display {
@@ -146,19 +175,8 @@
 
   <!-- 3. JAM ANALOG ASTRO 2D -->
   <div class="clock-face">
-    <!-- ANGKA 1-12 -->
-    <div class="number n12">12</div>
-    <div class="number n1">1</div>
-    <div class="number n2">2</div>
-    <div class="number n3">3</div>
-    <div class="number n4">4</div>
-    <div class="number n5">5</div>
-    <div class="number n6">6</div>
-    <div class="number n7">7</div>
-    <div class="number n8">8</div>
-    <div class="number n9">9</div>
-    <div class="number n10">10</div>
-    <div class="number n11">11</div>
+    <!-- ANGKA 1-12 SECARA DINAMIS -->
+    <div id="numbers-container"></div>
 
     <!-- MATAHARI & PLANET 2D -->
     <div class="sun"></div>
@@ -169,6 +187,8 @@
     <!-- JARUM JAM ANALOG -->
     <div class="hand hour-hand" id="hour-hand"></div>
     <div class="hand minute-hand" id="minute-hand"></div>
+    <div class="hand second-hand" id="second-hand"></div>
+    <div class="center-dot"></div>
   </div>
 
   <!-- 4. SKY EVENT -->
@@ -181,6 +201,27 @@
       "JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI",
       "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
     ];
+
+    // MEMBUAT POSISI ANGKA 1-12 PRESISI LINGKARAN (ACUAN RADIUS 82PX)
+    function generateNumbers() {
+      const container = document.getElementById('numbers-container');
+      const radius = 82; // Jarak lingkaran angka dari pusat
+      const centerX = 110; // Pusat X
+      const centerY = 110; // Pusat Y
+
+      for (let i = 1; i <= 12; i++) {
+        const angle = (i * 30 - 90) * (Math.PI / 180); // Sudut derajat ke radian
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+
+        const numDiv = document.createElement('div');
+        numDiv.className = 'number';
+        numDiv.style.left = `${x}px`;
+        numDiv.style.top = `${y}px`;
+        numDiv.textContent = i;
+        container.appendChild(numDiv);
+      }
+    }
 
     function updateDateTime() {
       const now = new Date();
@@ -204,9 +245,11 @@
       // 3. POSISI JARUM JAM ANALOG
       const hourDeg = (hours % 12 + minutes / 60) * 30;
       const minuteDeg = (minutes + seconds / 60) * 6;
+      const secondDeg = seconds * 6;
 
       document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
       document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
+      document.getElementById('second-hand').style.transform = `rotate(${secondDeg}deg)`;
     }
 
     function updateSkyEvent() {
@@ -227,6 +270,7 @@
       }
     }
 
+    generateNumbers();
     setInterval(updateDateTime, 1000);
     updateDateTime();
     updateSkyEvent();

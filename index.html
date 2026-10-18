@@ -8,39 +8,53 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      background: transparent; /* Background transparan */
+      background: transparent;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      color: #e2e8f0;
       overflow: hidden;
+    }
+
+    /* Card Kotak Estetik dengan Efek Kaca Gelap */
+    .widget-card {
+      width: 270px;
+      height: 270px;
+      background: rgba(15, 23, 42, 0.85); /* Warna gelap transparan agar kontras */
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
     }
 
     .clock-container {
       position: relative;
-      width: 300px;
-      height: 280px;
+      width: 200px;
+      height: 180px;
       display: flex;
       justify-content: center;
       align-items: center;
-      perspective: 800px; /* Efek perspektif kedalaman 3D */
+      perspective: 600px;
     }
 
-    /* Matahari di pusat */
+    /* Matahari */
     .sun {
       position: absolute;
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       background: radial-gradient(circle, #fff7ed 10%, #f59e0b 80%, #d97706 100%);
       border-radius: 50%;
-      box-shadow: 0 0 18px #f59e0b, 0 0 35px rgba(245, 158, 11, 0.5);
+      box-shadow: 0 0 15px #f59e0b, 0 0 25px rgba(245, 158, 11, 0.6);
       z-index: 10;
     }
 
-    /* Orbit elips dengan kemiringan 3D */
+    /* Orbit Elips 3D */
     .orbit-system {
       position: absolute;
       width: 100%;
@@ -48,49 +62,48 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      transform: rotateX(65deg) rotateY(-10deg); /* Membuat orbit jadi oval/elips miring */
+      transform: rotateX(65deg) rotateY(-10deg);
       transform-style: preserve-3d;
     }
 
     .orbit {
       position: absolute;
-      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border: 1px dashed rgba(255, 255, 255, 0.25);
       border-radius: 50%;
       animation: spin linear infinite;
       transform-style: preserve-3d;
     }
 
-    /* Durasi dipelankan agar gerakan rileks */
-    .orbit.mercury { width: 100px; height: 100px; animation-duration: 12s; }
-    .orbit.venus   { width: 160px; height: 160px; animation-duration: 22s; }
-    .orbit.earth   { width: 230px; height: 230px; animation-duration: 36s; }
+    /* Kecepatan Putaran Pelan & Rileks */
+    .orbit.mercury { width: 70px; height: 70px; animation-duration: 12s; }
+    .orbit.venus   { width: 115px; height: 115px; animation-duration: 22s; }
+    .orbit.earth   { width: 160px; height: 160px; animation-duration: 36s; }
 
     /* Planet */
     .planet-wrapper {
       position: absolute;
-      top: -6px;
+      top: -5px;
       left: 50%;
       transform: translateX(-50%);
     }
 
     .planet {
       border-radius: 50%;
-      /* Membalikkan rotasi 3D agar planet tetap tampak bulat sempurna */
       transform: rotateX(-65deg);
     }
 
-    .mercury .planet { width: 8px; height: 8px; background: #cbd5e1; box-shadow: 0 0 6px #cbd5e1; }
-    .venus .planet   { width: 11px; height: 11px; background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
-    .earth .planet   { width: 13px; height: 13px; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; }
+    .mercury .planet { width: 7px; height: 7px; background: #cbd5e1; box-shadow: 0 0 5px #cbd5e1; }
+    .venus .planet   { width: 10px; height: 10px; background: #fbbf24; box-shadow: 0 0 7px #fbbf24; }
+    .earth .planet   { width: 12px; height: 12px; background: #38bdf8; box-shadow: 0 0 9px #38bdf8; }
 
     /* Jam Digital */
     .time-display {
       margin-top: 5px;
       font-size: 13px;
       letter-spacing: 1.5px;
-      color: #94a3b8;
+      color: #e2e8f0;
       font-weight: 500;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      font-family: monospace;
     }
 
     @keyframes spin {
@@ -100,16 +113,17 @@
 </head>
 <body>
 
-  <div class="clock-container">
-    <div class="sun"></div>
-    <div class="orbit-system">
-      <div class="orbit mercury"><div class="planet-wrapper"><div class="planet"></div></div></div>
-      <div class="orbit venus"><div class="planet-wrapper"><div class="planet"></div></div></div>
-      <div class="orbit earth"><div class="planet-wrapper"><div class="planet"></div></div></div>
+  <div class="widget-card">
+    <div class="clock-container">
+      <div class="sun"></div>
+      <div class="orbit-system">
+        <div class="orbit mercury"><div class="planet-wrapper"><div class="planet"></div></div></div>
+        <div class="orbit venus"><div class="planet-wrapper"><div class="planet"></div></div></div>
+        <div class="orbit earth"><div class="planet-wrapper"><div class="planet"></div></div></div>
+      </div>
     </div>
+    <div class="time-display" id="clock">00:00:00 WIB</div>
   </div>
-
-  <div class="time-display" id="clock">00:00:00 WIB</div>
 
   <script>
     function updateClock() {

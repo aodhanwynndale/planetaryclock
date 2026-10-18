@@ -18,7 +18,7 @@
       color: #ffffff;
       overflow: hidden;
       padding: 10px;
-      text-transform: uppercase; /* Capslock khusus untuk tampilan widget */
+      text-transform: uppercase;
       text-align: center;
     }
 
@@ -35,80 +35,98 @@
     .time-display {
       font-size: 16px;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       color: #ffffff;
       letter-spacing: 1px;
     }
 
-    /* 3. CONTAINER PLANET */
-    .clock-container {
+    /* 3. JAM ANALOG ASTRO 2D */
+    .clock-face {
       position: relative;
-      width: 220px;
-      height: 160px;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       display: flex;
       justify-content: center;
       align-items: center;
-      perspective: 600px;
     }
 
+    /* ANGKA JAM 1-12 */
+    .number {
+      position: absolute;
+      font-size: 11px;
+      font-weight: bold;
+      color: #fef08a;
+      text-shadow: 0 0 5px rgba(254, 240, 138, 0.4);
+    }
+    .n1  { top: 10px; right: 52px; }
+    .n2  { top: 48px; right: 12px; }
+    .n3  { top: 96px; right: 8px; }
+    .n4  { bottom: 48px; right: 12px; }
+    .n5  { bottom: 10px; right: 52px; }
+    .n6  { bottom: 6px; left: 50%; transform: translateX(-50%); }
+    .n7  { bottom: 10px; left: 52px; }
+    .n8  { bottom: 48px; left: 12px; }
+    .n9  { top: 96px; left: 8px; }
+    .n10 { top: 48px; left: 12px; }
+    .n11 { top: 10px; left: 52px; }
+    .n12 { top: 6px; left: 50%; transform: translateX(-50%); }
+
+    /* MATAHARI DI PUSAT */
     .sun {
       position: absolute;
-      width: 26px;
-      height: 26px;
-      background: radial-gradient(circle, #fff7ed 10%, #f59e0b 80%, #d97706 100%);
+      width: 22px;
+      height: 22px;
+      background: radial-gradient(circle, #fef08a 20%, #f59e0b 80%);
       border-radius: 50%;
-      box-shadow: 0 0 12px #f59e0b, 0 0 20px rgba(245, 158, 11, 0.5);
+      box-shadow: 0 0 12px #f59e0b, 0 0 20px rgba(245, 158, 11, 0.6);
       z-index: 10;
     }
 
-    .orbit-system {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transform: rotateX(65deg) rotateY(-10deg);
-      transform-style: preserve-3d;
-    }
-
+    /* LINTASAN ORBIT 2D LINGKARAN DATAR */
     .orbit {
       position: absolute;
-      border: 1px dashed rgba(255, 255, 255, 0.25);
+      border: 1px dashed rgba(255, 255, 255, 0.18);
       border-radius: 50%;
       animation: spin linear infinite;
-      transform-style: preserve-3d;
     }
-
-    .orbit.mercury { width: 65px; height: 65px; animation-duration: 12s; }
-    .orbit.venus   { width: 110px; height: 110px; animation-duration: 22s; }
-    .orbit.earth   { width: 155px; height: 155px; animation-duration: 36s; }
-
-    .planet-wrapper {
-      position: absolute;
-      top: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
+    .orbit.mercury { width: 55px; height: 55px; animation-duration: 16s; }
+    .orbit.venus   { width: 90px; height: 90px; animation-duration: 28s; }
+    .orbit.earth   { width: 125px; height: 125px; animation-duration: 45s; }
 
     .planet {
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%);
       border-radius: 50%;
-      transform: rotateX(-65deg);
     }
+    .mercury .planet { width: 5px; height: 5px; background: #cbd5e1; box-shadow: 0 0 4px #cbd5e1; }
+    .venus .planet   { width: 8px; height: 8px; background: #fbbf24; box-shadow: 0 0 6px #fbbf24; }
+    .earth .planet   { width: 10px; height: 10px; background: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
 
-    .mercury .planet { width: 6px; height: 6px; background: #ffffff; box-shadow: 0 0 4px #ffffff; }
-    .venus .planet   { width: 9px; height: 9px; background: #fbbf24; box-shadow: 0 0 6px #fbbf24; }
-    .earth .planet   { width: 11px; height: 11px; background: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
+    /* JARUM JAM ANALOG */
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      background: #fef08a;
+      border-radius: 4px;
+      box-shadow: 0 0 6px rgba(254, 240, 138, 0.6);
+      z-index: 12;
+    }
+    .hour-hand   { width: 3px; height: 42px; margin-left: -1.5px; }
+    .minute-hand { width: 2px; height: 62px; margin-left: -1px; }
 
     /* 4. SKY EVENT */
     .event-display {
-      margin-top: 12px;
+      margin-top: 14px;
       font-size: 13px;
       font-weight: bold;
       color: #ffffff;
-      background: transparent;
-      border: none;
-      padding: 0;
       line-height: 1.4;
       letter-spacing: 1px;
     }
@@ -123,17 +141,34 @@
   <!-- 1. TANGGAL -->
   <div class="date-display" id="date">-- --------- ----</div>
 
-  <!-- 2. JAM -->
+  <!-- 2. JAM DIGITAL -->
   <div class="time-display" id="clock">00:00:00 GMT+7</div>
 
-  <!-- 3. PLANET -->
-  <div class="clock-container">
+  <!-- 3. JAM ANALOG ASTRO 2D -->
+  <div class="clock-face">
+    <!-- ANGKA 1-12 -->
+    <div class="number n12">12</div>
+    <div class="number n1">1</div>
+    <div class="number n2">2</div>
+    <div class="number n3">3</div>
+    <div class="number n4">4</div>
+    <div class="number n5">5</div>
+    <div class="number n6">6</div>
+    <div class="number n7">7</div>
+    <div class="number n8">8</div>
+    <div class="number n9">9</div>
+    <div class="number n10">10</div>
+    <div class="number n11">11</div>
+
+    <!-- MATAHARI & PLANET 2D -->
     <div class="sun"></div>
-    <div class="orbit-system">
-      <div class="orbit mercury"><div class="planet-wrapper"><div class="planet"></div></div></div>
-      <div class="orbit venus"><div class="planet-wrapper"><div class="planet"></div></div></div>
-      <div class="orbit earth"><div class="planet-wrapper"><div class="planet"></div></div></div>
-    </div>
+    <div class="orbit mercury"><div class="planet"></div></div>
+    <div class="orbit venus"><div class="planet"></div></div>
+    <div class="orbit earth"><div class="planet"></div></div>
+
+    <!-- JARUM JAM ANALOG -->
+    <div class="hand hour-hand" id="hour-hand"></div>
+    <div class="hand minute-hand" id="minute-hand"></div>
   </div>
 
   <!-- 4. SKY EVENT -->
@@ -156,19 +191,28 @@
       const year = now.getFullYear();
       document.getElementById('date').textContent = `${day} ${month} ${year}`;
 
-      // 2. FORMAT JAM GMT+7
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} GMT+7`;
+      // 2. FORMAT JAM DIGITAL GMT+7
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      const strH = String(hours).padStart(2, '0');
+      const strM = String(minutes).padStart(2, '0');
+      const strS = String(seconds).padStart(2, '0');
+      document.getElementById('clock').textContent = `${strH}:${strM}:${strS} GMT+7`;
+
+      // 3. POSISI JARUM JAM ANALOG
+      const hourDeg = (hours % 12 + minutes / 60) * 30;
+      const minuteDeg = (minutes + seconds / 60) * 6;
+
+      document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
+      document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
     }
 
     function updateSkyEvent() {
       const now = new Date();
       
-      // TARGET EVENT TERDEKAT (21 OKTOBER)
       let eventDate = new Date(now.getFullYear(), 9, 21);
-      
       if (now > eventDate) {
         eventDate = new Date(now.getFullYear(), 10, 17); 
       }

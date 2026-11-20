@@ -6,11 +6,12 @@
 <title>Astro Clock</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: transparent; }
+  html { background: #0a0c1a; }
   body {
     min-height: 100vh;
     display: flex; justify-content: center; align-items: center;
-    padding: 8px; overflow: hidden;
+    padding: 6px; overflow: hidden;
+    background: radial-gradient(90% 60% at 20% 0%, #1b1740, transparent 70%), radial-gradient(90% 60% at 90% 100%, #10243f, transparent 70%), #0a0c1a;
     font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     color: #f4f1ea; text-transform: uppercase; text-align: center;
   }
@@ -18,7 +19,7 @@
   /* KARTU KACA — gelap transparan agar terbaca di mode terang & gelap */
   .card {
     --gold: #e8d5a3;
-    position: relative; width: 264px; padding: 18px 16px 16px;
+    position: relative; flex: none; width: 264px; transform-origin: center; padding: 18px 16px 16px;
     border-radius: 30px;
     background:
       radial-gradient(120% 70% at 0% 0%, rgba(139,92,246,.22), transparent 60%),
@@ -217,6 +218,18 @@
     $("date").textContent = `${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
     $("tz").textContent = tzLabel(n);
     drawMoon(); updateEvent();
+  }
+  // Skala otomatis agar pas di ukuran embed berapa pun
+  const card = document.querySelector(".card");
+  function fit() {
+    const k = Math.min((innerWidth - 12) / card.offsetWidth, (innerHeight - 12) / card.offsetHeight, 1.5);
+    card.style.transform = `scale(${k})`;
+  }
+  addEventListener("resize", fit); fit();
+  // Tambahkan ?transparent di URL untuk latar tembus pandang
+  if (/transparent/.test(location.search)) {
+    document.documentElement.style.background = "transparent";
+    document.body.style.background = "transparent";
   }
   slow(); setInterval(slow, 60000); tick();
 </script>

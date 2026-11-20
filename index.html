@@ -23,16 +23,16 @@
     position: relative; flex: none; width: 264px; transform-origin: center; padding: 18px 16px 16px;
     border-radius: 30px;
     background:
-      radial-gradient(120% 70% at 0% 0%, rgba(139,92,246,.22), transparent 60%),
-      radial-gradient(120% 70% at 100% 100%, rgba(56,189,248,.18), transparent 60%),
-      radial-gradient(90% 50% at 100% 0%, rgba(244,114,182,.12), transparent 60%),
-      rgba(11,13,28,.68);
-    box-shadow: 0 10px 40px rgba(8,10,30,.35), inset 0 0 30px rgba(255,255,255,.02);
+      radial-gradient(120% 70% at 0% 0%, rgba(37,99,235,.30), transparent 60%),
+      radial-gradient(120% 70% at 100% 100%, rgba(14,165,233,.20), transparent 60%),
+      radial-gradient(90% 50% at 100% 0%, rgba(34,211,238,.12), transparent 60%),
+      rgba(5,15,40,.72);
+    box-shadow: 0 10px 40px rgba(2,8,28,.40), inset 0 0 30px rgba(255,255,255,.02);
     -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   }
   .card::before { /* border aurora */
     content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
-    background: linear-gradient(135deg, rgba(167,139,250,.7), rgba(255,255,255,.08) 35%, rgba(255,255,255,.06) 65%, rgba(244,114,182,.55));
+    background: linear-gradient(135deg, rgba(96,165,250,.75), rgba(255,255,255,.08) 35%, rgba(255,255,255,.06) 65%, rgba(34,211,238,.50));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
   }
@@ -52,7 +52,7 @@
     position: relative; width: 200px; height: 200px; margin: 0 auto; border-radius: 50%;
     display: flex; justify-content: center; align-items: center;
     background: radial-gradient(circle, rgba(255,255,255,.05), transparent 70%);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.10), 0 0 24px rgba(139,92,246,.12);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.10), 0 0 24px rgba(56,189,248,.14);
   }
   .tick { position: absolute; inset: 0; }
   .tick i { display: block; margin: 3px auto 0; width: 1px; height: 4px; background: rgba(255,255,255,.28); }
@@ -94,7 +94,7 @@
         clip-path: polygon(50% 0, 100% 100%, 0 100%); }
   .sh { width: 1px; height: 76px; margin-left: -.5px; background: var(--gold); z-index: 9; }
   .dot { position: absolute; width: 7px; height: 7px; border-radius: 50%; z-index: 10;
-         background: var(--gold); box-shadow: 0 0 0 2px rgba(11,13,28,.9); }
+         background: var(--gold); box-shadow: 0 0 0 2px rgba(5,15,40,.9); }
 
   /* SKY EVENT */
   .ev { margin-top: 14px; }
@@ -229,8 +229,8 @@
   addEventListener("resize", fit); fit();
   // Tambahkan ?solid di URL untuk latar gelap penuh (cadangan jika Notion menampilkan putih)
   if (/solid/.test(location.search)) {
-    document.documentElement.style.background = "#0a0c1a";
-    document.body.style.background = "radial-gradient(90% 60% at 20% 0%, #1b1740, transparent 70%), radial-gradient(90% 60% at 90% 100%, #10243f, transparent 70%), #0a0c1a";
+    document.documentElement.style.background = "#050d1f";
+    document.body.style.background = "radial-gradient(90% 60% at 20% 0%, #0f2a5c, transparent 70%), radial-gradient(90% 60% at 90% 100%, #0b3a5a, transparent 70%), #050d1f";
   }
   slow(); setInterval(slow, 60000); tick();
 </script>

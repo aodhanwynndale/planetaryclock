@@ -1,301 +1,224 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ASTRO CLOCK WIDGET</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      background: #070914;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      color: #ffffff;
-      overflow: hidden;
-      padding: 10px;
-      text-transform: uppercase;
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astro Clock</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  body {
+    min-height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    padding: 8px; overflow: hidden;
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #f4f1ea; text-transform: uppercase; text-align: center;
+  }
 
-    /* 1. TANGGAL */
-    .date-display {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 4px;
-      color: #ffffff;
-      letter-spacing: 1px;
-    }
+  /* KARTU KACA — gelap transparan agar terbaca di mode terang & gelap */
+  .card {
+    --gold: #e8d5a3;
+    position: relative; width: 264px; padding: 18px 16px 16px;
+    border-radius: 30px;
+    background:
+      radial-gradient(120% 70% at 0% 0%, rgba(139,92,246,.22), transparent 60%),
+      radial-gradient(120% 70% at 100% 100%, rgba(56,189,248,.18), transparent 60%),
+      radial-gradient(90% 50% at 100% 0%, rgba(244,114,182,.12), transparent 60%),
+      rgba(11,13,28,.68);
+    box-shadow: 0 10px 40px rgba(8,10,30,.35), inset 0 0 30px rgba(255,255,255,.02);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  }
+  .card::before { /* border aurora */
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+    background: linear-gradient(135deg, rgba(167,139,250,.7), rgba(255,255,255,.08) 35%, rgba(255,255,255,.06) 65%, rgba(244,114,182,.55));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
 
-    /* 2. JAM DIGITAL */
-    .time-display {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 12px;
-      color: #ffffff;
-      letter-spacing: 1px;
-    }
+  /* TANGGAL + BULAN */
+  .top { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 2px; }
+  .date { font-size: 10px; letter-spacing: 3px; opacity: .65; font-weight: 500; }
+  #moon { width: 16px; height: 16px; opacity: .9; }
 
-    /* 3. JAM ANALOG ASTRO 2D */
-    .clock-face {
-      position: relative;
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+  /* JAM DIGITAL */
+  .time { font-size: 34px; font-weight: 200; letter-spacing: 4px; line-height: 1.15; padding-left: 4px; }
+  .time .sec { font-size: 13px; color: var(--gold); letter-spacing: 2px; margin-left: 4px; font-weight: 400; }
+  .tz { font-size: 8px; letter-spacing: 3px; opacity: .4; margin-bottom: 12px; }
 
-    /* BINGKAI GARIS BINGKAI LUAR STATIS (TANPA GERAK / TANPA PLANET) */
-    .frame-ring-outer {
-      position: absolute;
-      width: 168px;
-      height: 168px;
-      border-radius: 50%;
-      border: 1px dashed rgba(254, 240, 138, 0.35); /* Garis lingkar bingkai warna emas pudar */
-      pointer-events: none;
-    }
+  /* JAM ANALOG */
+  .face {
+    position: relative; width: 200px; height: 200px; margin: 0 auto; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    background: radial-gradient(circle, rgba(255,255,255,.05), transparent 70%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.10), 0 0 24px rgba(139,92,246,.12);
+  }
+  .tick { position: absolute; inset: 0; }
+  .tick i { display: block; margin: 3px auto 0; width: 1px; height: 4px; background: rgba(255,255,255,.28); }
+  .tick.h i { width: 1.5px; height: 8px; background: rgba(232,213,163,.85); }
+  .n { position: absolute; font-size: 11px; font-weight: 500; color: var(--gold); transform: translate(-50%,-50%); letter-spacing: 0; }
 
-    .frame-ring-inner {
-      position: absolute;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.12); /* Garis pembatas tipis di dalam angka */
-      pointer-events: none;
-    }
+  .star { position: absolute; border-radius: 50%; background: #fff; animation: tw 4s ease-in-out infinite; }
+  @keyframes tw { 0%,100% { opacity: .15; } 50% { opacity: .85; } }
 
-    /* ANGKA JAM 1-12 */
-    .number {
-      position: absolute;
-      font-size: 13px;
-      font-weight: bold;
-      color: #fef08a;
-      text-shadow: 0 0 6px rgba(254, 240, 138, 0.6);
-      width: 18px;
-      height: 18px;
-      line-height: 18px;
-      text-align: center;
-      margin-left: -9px;
-      margin-top: -9px;
-      z-index: 15;
-    }
+  .sun { position: absolute; width: 16px; height: 16px; border-radius: 50%; z-index: 5;
+    background: radial-gradient(circle, #fff6cf 15%, #f5b942 70%);
+    box-shadow: 0 0 8px #f5b942, 0 0 18px rgba(245,185,66,.55), 0 0 34px rgba(245,185,66,.25); }
 
-    /* MATAHARI DI PUSAT */
-    .sun {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: radial-gradient(circle, #fef08a 20%, #f59e0b 80%);
-      border-radius: 50%;
-      box-shadow: 0 0 10px #f59e0b, 0 0 18px rgba(245, 158, 11, 0.6);
-      z-index: 10;
-    }
+  .orbit { position: absolute; border-radius: 50%; animation: spin linear infinite;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
+  .orbit::before { /* trail */
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0deg 240deg, color-mix(in srgb, var(--c) 65%, transparent) 360deg);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.6px), #000 calc(100% - 1.4px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 1.6px), #000 calc(100% - 1.4px));
+  }
+  .planet { position: absolute; top: 0; left: 50%; transform: translate(-50%,-50%); border-radius: 50%;
+    background: var(--c); box-shadow: 0 0 6px var(--c); }
+  .mercury { width: 52px;  height: 52px;  animation-duration: 14s; --c: #cbd5e1; }
+  .venus   { width: 80px;  height: 80px;  animation-duration: 24s; --c: #e9d5a1; }
+  .earth   { width: 108px; height: 108px; animation-duration: 38s; --c: #7dd3fc; }
+  .mars    { width: 136px; height: 136px; animation-duration: 52s; --c: #fda48a; }
+  .mercury .planet { width: 4px; height: 4px; }
+  .venus .planet   { width: 6px; height: 6px; }
+  .earth .planet   { width: 7px; height: 7px; }
+  .mars .planet    { width: 5px; height: 5px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* LINTASAN ORBIT PLANET (MERKURIUS, VENUS, BUMI, MARS) */
-    .orbit {
-      position: absolute;
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      animation: spin linear infinite;
-    }
-    .orbit.mercury { width: 44px; height: 44px; animation-duration: 14s; }
-    .orbit.venus   { width: 68px; height: 68px; animation-duration: 24s; }
-    .orbit.earth   { width: 92px; height: 92px; animation-duration: 38s; }
-    .orbit.mars    { width: 116px; height: 116px; animation-duration: 52s; }
+  .hands { position: absolute; inset: 0; filter: drop-shadow(0 0 3px rgba(255,255,255,.35)); }
+  .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: 50% 100%; }
+  .hh { width: 4px; height: 42px; margin-left: -2px; background: #f4f1ea; z-index: 7;
+        clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .mh { width: 3px; height: 62px; margin-left: -1.5px; background: #f4f1ea; z-index: 8;
+        clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .sh { width: 1px; height: 76px; margin-left: -.5px; background: var(--gold); z-index: 9; }
+  .dot { position: absolute; width: 7px; height: 7px; border-radius: 50%; z-index: 10;
+         background: var(--gold); box-shadow: 0 0 0 2px rgba(11,13,28,.9); }
 
-    .planet {
-      position: absolute;
-      top: -4px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-radius: 50%;
-    }
-    .mercury .planet { width: 4px; height: 4px; background: #cbd5e1; box-shadow: 0 0 4px #cbd5e1; }
-    .venus .planet   { width: 6px; height: 6px; background: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
-    .earth .planet   { width: 8px; height: 8px; background: #38bdf8; box-shadow: 0 0 7px #38bdf8; }
-    .mars .planet    { width: 6px; height: 6px; background: #f97316; box-shadow: 0 0 5px #f97316; }
+  /* SKY EVENT */
+  .ev { margin-top: 14px; }
+  .ev .l { font-size: 8px; letter-spacing: 3px; opacity: .4; }
+  .ev .t { font-size: 11px; letter-spacing: 2px; opacity: .85; margin-top: 4px; font-weight: 500; }
+  .ev .d { font-size: 11px; letter-spacing: 3px; color: var(--gold); margin-top: 3px; }
 
-    /* JARUM JAM ANALOG */
-    .hand {
-      position: absolute;
-      bottom: 50%;
-      left: 50%;
-      transform-origin: bottom center;
-      border-radius: 4px;
-    }
-
-    .hour-hand {
-      width: 2.5px;
-      height: 38px;
-      margin-left: -1.25px;
-      background: #ffffff;
-      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-      z-index: 12;
-    }
-
-    .minute-hand {
-      width: 2px;
-      height: 54px;
-      margin-left: -1px;
-      background: #ffffff;
-      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-      z-index: 13;
-    }
-
-    .second-hand {
-      width: 1.5px;
-      height: 66px;
-      margin-left: -0.75px;
-      background: #ef4444;
-      box-shadow: 0 0 8px rgba(239, 68, 68, 0.9);
-      z-index: 14;
-    }
-
-    .center-dot {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      background: #ef4444;
-      border-radius: 50%;
-      z-index: 16;
-    }
-
-    /* 4. SKY EVENT */
-    .event-display {
-      margin-top: 14px;
-      font-size: 13px;
-      font-weight: bold;
-      color: #ffffff;
-      line-height: 1.4;
-      letter-spacing: 1px;
-    }
-
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+  @media (prefers-reduced-motion: reduce) { .orbit, .star { animation: none; } }
+</style>
 </head>
 <body>
+<div class="card">
+  <div class="top">
+    <svg id="moon" viewBox="-10 -10 20 20">
+      <circle r="8" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.3)" stroke-width=".6"/>
+      <g id="moon-g"><path id="moon-lit" fill="#f3e7c4"/></g>
+    </svg>
+    <div class="date" id="date">-- --------- ----</div>
+  </div>
+  <div class="time"><span id="hm">00:00</span><span class="sec" id="ss">00</span></div>
+  <div class="tz" id="tz">GMT</div>
 
-  <!-- 1. TANGGAL -->
-  <div class="date-display" id="date">-- --------- ----</div>
-
-  <!-- 2. JAM DIGITAL -->
-  <div class="time-display" id="clock">00:00:00 GMT+7</div>
-
-  <!-- 3. JAM ANALOG ASTRO 2D -->
-  <div class="clock-face">
-    <!-- GARIS BINGKAI STATIS (OUTER & INNER BORDER) -->
-    <div class="frame-ring-outer"></div>
-    <div class="frame-ring-inner"></div>
-
-    <!-- ANGKA 1-12 DINAMIS -->
-    <div id="numbers-container"></div>
-
-    <!-- MATAHARI & 4 PLANET 2D -->
+  <div class="face" id="face">
     <div class="sun"></div>
     <div class="orbit mercury"><div class="planet"></div></div>
     <div class="orbit venus"><div class="planet"></div></div>
     <div class="orbit earth"><div class="planet"></div></div>
     <div class="orbit mars"><div class="planet"></div></div>
-
-    <!-- JARUM JAM ANALOG -->
-    <div class="hand hour-hand" id="hour-hand"></div>
-    <div class="hand minute-hand" id="minute-hand"></div>
-    <div class="hand second-hand" id="second-hand"></div>
-    <div class="center-dot"></div>
+    <span class="n" style="left:50%;top:22px">12</span>
+    <span class="n" style="left:178px;top:50%">3</span>
+    <span class="n" style="left:50%;top:178px">6</span>
+    <span class="n" style="left:22px;top:50%">9</span>
+    <div class="hands">
+      <div class="hand hh" id="hh"></div>
+      <div class="hand mh" id="mh"></div>
+      <div class="hand sh" id="sh"></div>
+    </div>
+    <div class="dot"></div>
   </div>
 
-  <!-- 4. SKY EVENT -->
-  <div class="event-display" id="sky-event">
-    CALCULATING...
+  <div class="ev">
+    <div class="l">NEXT SKY EVENT</div>
+    <div class="t" id="ev-name">CALCULATING...</div>
+    <div class="d" id="ev-days"></div>
   </div>
+</div>
 
-  <script>
-    const monthNames = [
-      "JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI",
-      "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
-    ];
+<script>
+  const MONTHS = ["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"];
+  const EVENTS = [ // [bulan, tanggal, nama] — perkiraan puncak, berulang tiap tahun
+    [1,3,"QUADRANTIDS"],[4,22,"LYRIDS"],[5,6,"ETA AQUARIIDS"],[8,12,"PERSEIDS"],
+    [10,21,"ORIONIDS"],[11,17,"LEONIDS"],[12,14,"GEMINIDS"],[12,22,"URSIDS"]
+  ];
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2, "0");
 
-    function generateNumbers() {
-      const container = document.getElementById('numbers-container');
-      const radius = 77; // Jarak lingkaran angka pas di antara dua garis bingkai
-      const centerX = 95;
-      const centerY = 95;
+  // Tick marks
+  const face = $("face");
+  for (let i = 0; i < 60; i++) {
+    const t = document.createElement("div");
+    t.className = "tick" + (i % 5 === 0 ? " h" : "");
+    t.style.transform = `rotate(${i * 6}deg)`;
+    t.innerHTML = "<i></i>";
+    face.appendChild(t);
+  }
+  // Bintang kecil (posisi tetap)
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 16; i++) {
+    const a = rnd() * Math.PI * 2, r = 22 + rnd() * 62, s = 1 + rnd() * 1.2;
+    const el = document.createElement("div");
+    el.className = "star";
+    el.style.cssText = `width:${s}px;height:${s}px;left:${100 + r * Math.cos(a)}px;top:${100 + r * Math.sin(a)}px;animation-delay:${(rnd() * 4).toFixed(2)}s;animation-duration:${(3 + rnd() * 3).toFixed(1)}s`;
+    face.insertBefore(el, face.firstChild);
+  }
 
-      for (let i = 1; i <= 12; i++) {
-        const angle = (i * 30 - 90) * (Math.PI / 180);
-        const x = centerX + radius * Math.cos(angle);
-        const y = centerY + radius * Math.sin(angle);
+  // Fase bulan
+  function drawMoon() {
+    const syn = 29.530588853;
+    const days = Date.now() / 86400000 - 10962.76;
+    const p = (((days % syn) + syn) % syn) / syn;
+    const r = 8, k = Math.cos(2 * Math.PI * p), rx = Math.abs(k) * r;
+    const sweep = k > 0 ? 0 : 1;
+    $("moon-lit").setAttribute("d", `M0 ${-r} A${r} ${r} 0 0 1 0 ${r} A${rx} ${r} 0 0 ${sweep} 0 ${-r}Z`);
+    $("moon-g").setAttribute("transform", p > 0.5 ? "scale(-1,1)" : "");
+  }
 
-        const numDiv = document.createElement('div');
-        numDiv.className = 'number';
-        numDiv.style.left = `${x}px`;
-        numDiv.style.top = `${y}px`;
-        numDiv.textContent = i;
-        container.appendChild(numDiv);
+  // Label zona waktu otomatis
+  function tzLabel(d) {
+    const o = -d.getTimezoneOffset(), s = o >= 0 ? "+" : "-", a = Math.abs(o);
+    return "GMT" + s + Math.floor(a / 60) + (a % 60 ? ":" + pad(a % 60) : "");
+  }
+
+  // Sky event berikutnya
+  function updateEvent() {
+    const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let best = null;
+    for (const [m, d, name] of EVENTS) {
+      for (const y of [now.getFullYear(), now.getFullYear() + 1]) {
+        const dt = new Date(y, m - 1, d);
+        if (dt >= today && (!best || dt < best.dt)) best = { dt, name };
       }
     }
+    const diff = Math.round((best.dt - today) / 86400000);
+    $("ev-name").textContent = best.name + " METEOR SHOWER";
+    $("ev-days").textContent = diff === 0 ? "TODAY" : `IN ${diff} DAY${diff > 1 ? "S" : ""}`;
+  }
 
-    function updateDateTime() {
-      const now = new Date();
+  // Jam (jarum detik halus)
+  function tick() {
+    const n = new Date(), ms = n.getMilliseconds();
+    const s = n.getSeconds() + ms / 1000, m = n.getMinutes() + s / 60, h = (n.getHours() % 12) + m / 60;
+    $("hh").style.transform = `rotate(${h * 30}deg)`;
+    $("mh").style.transform = `rotate(${m * 6}deg)`;
+    $("sh").style.transform = `rotate(${s * 6}deg)`;
+    $("hm").textContent = pad(n.getHours()) + ":" + pad(n.getMinutes());
+    $("ss").textContent = pad(n.getSeconds());
+    requestAnimationFrame(tick);
+  }
 
-      // 1. TANGGAL
-      const day = now.getDate();
-      const month = monthNames[now.getMonth()];
-      const year = now.getFullYear();
-      document.getElementById('date').textContent = `${day} ${month} ${year}`;
-
-      // 2. JAM DIGITAL GMT+7
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
-
-      const strH = String(hours).padStart(2, '0');
-      const strM = String(minutes).padStart(2, '0');
-      const strS = String(seconds).padStart(2, '0');
-      document.getElementById('clock').textContent = `${strH}:${strM}:${strS} GMT+7`;
-
-      // 3. JARUM JAM ANALOG
-      const hourDeg = (hours % 12 + minutes / 60) * 30;
-      const minuteDeg = (minutes + seconds / 60) * 6;
-      const secondDeg = seconds * 6;
-
-      document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
-      document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
-      document.getElementById('second-hand').style.transform = `rotate(${secondDeg}deg)`;
-    }
-
-    function updateSkyEvent() {
-      const now = new Date();
-      
-      let eventDate = new Date(now.getFullYear(), 9, 21);
-      if (now > eventDate) {
-        eventDate = new Date(now.getFullYear(), 10, 17); 
-      }
-
-      const diffTime = eventDate - now;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (diffDays <= 0) {
-        document.getElementById('sky-event').innerHTML = "TODAY WILL BE<br>ORIONIDS METEOR SHOWER";
-      } else {
-        document.getElementById('sky-event').innerHTML = `IN ${diffDays} DAYS WILL BE<br>ORIONIDS METEOR SHOWER`;
-      }
-    }
-
-    generateNumbers();
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
-    updateSkyEvent();
-  </script>
+  function slow() {
+    const n = new Date();
+    $("date").textContent = `${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
+    $("tz").textContent = tzLabel(n);
+    drawMoon(); updateEvent();
+  }
+  slow(); setInterval(slow, 60000); tick();
+</script>
 </body>
 </html>

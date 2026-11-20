@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
 <title>Astro Clock</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { background: #0a0c1a; }
+  html { background: transparent; color-scheme: light dark; }
   body {
     min-height: 100vh;
     display: flex; justify-content: center; align-items: center;
     padding: 6px; overflow: hidden;
-    background: radial-gradient(90% 60% at 20% 0%, #1b1740, transparent 70%), radial-gradient(90% 60% at 90% 100%, #10243f, transparent 70%), #0a0c1a;
+    background: transparent;
     font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     color: #f4f1ea; text-transform: uppercase; text-align: center;
   }
@@ -226,10 +227,10 @@
     card.style.transform = `scale(${k})`;
   }
   addEventListener("resize", fit); fit();
-  // Tambahkan ?transparent di URL untuk latar tembus pandang
-  if (/transparent/.test(location.search)) {
-    document.documentElement.style.background = "transparent";
-    document.body.style.background = "transparent";
+  // Tambahkan ?solid di URL untuk latar gelap penuh (cadangan jika Notion menampilkan putih)
+  if (/solid/.test(location.search)) {
+    document.documentElement.style.background = "#0a0c1a";
+    document.body.style.background = "radial-gradient(90% 60% at 20% 0%, #1b1740, transparent 70%), radial-gradient(90% 60% at 90% 100%, #10243f, transparent 70%), #0a0c1a";
   }
   slow(); setInterval(slow, 60000); tick();
 </script>
